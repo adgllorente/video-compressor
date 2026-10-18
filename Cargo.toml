@@ -7,3 +7,7 @@ edition = "2024"
 eframe = "0.37.0"
 ffmpeg-sidecar = "2.6.0"
 rfd = "0.17.2"
+
+[profile.release]
+strip = true
+lto = "thin"
