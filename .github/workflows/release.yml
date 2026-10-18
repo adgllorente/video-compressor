@@ -11,21 +11,24 @@ permissions:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: macos-14
+            target: aarch64-apple-darwin
             script: scripts/package-macos.sh
             asset: dist/CompresorVideo-macos.zip
           - os: windows-latest
+            target: x86_64-pc-windows-msvc
             script: scripts/package-windows.sh
             asset: dist/CompresorVideo-windows.zip
-            target: x86_64-pc-windows-msvc
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.target || 'aarch64-apple-darwin' }}
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
       - name: Empaquetar
         shell: bash
         env:
@@ -35,7 +38,23 @@ jobs:
         with:
           name: ${{ matrix.os }}
           path: ${{ matrix.asset }}
-      - if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
         with:
-          files: ${{ matrix.asset }}
+          path: dist
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true
+          body: |
+            Descarga el zip de tu sistema, descomprímelo y abre la app. ffmpeg va incluido.
+
+            - **macOS (Apple Silicon)**: la primera vez, clic derecho sobre la app → Abrir. Si dice que está dañada: `xattr -dr com.apple.quarantine "/Applications/Compresor de vídeo.app"`.
+            - **Windows 10/11**: descomprime la carpeta entera y abre «Compresor de video.exe». Si SmartScreen avisa: «Más información» → «Ejecutar de todas formas».

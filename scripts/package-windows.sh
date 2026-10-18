@@ -11,7 +11,7 @@ TARGET=${TARGET:-x86_64-pc-windows-gnu}
 cargo build --release --target "$TARGET"
 
 DIST=dist
-OUT="$DIST/Compresor de vídeo"
+OUT="$DIST/Compresor de video"
 CACHE="$DIST/.cache"
 rm -rf "$OUT"
 mkdir -p "$OUT" "$CACHE"
@@ -27,12 +27,12 @@ if [ ! -f "$CACHE/ffmpeg.exe" ]; then
   fi
 fi
 
-cp "target/$TARGET/release/$BIN.exe" "$OUT/Compresor de vídeo.exe"
+cp "target/$TARGET/release/$BIN.exe" "$OUT/Compresor de video.exe"
 cp "$CACHE/ffmpeg.exe" "$OUT/ffmpeg.exe"
 
 rm -f "$DIST/CompresorVideo-windows.zip"
 if command -v zip >/dev/null; then
-  (cd "$DIST" && zip -q -r -X CompresorVideo-windows.zip "Compresor de vídeo")
+  (cd "$DIST" && zip -q -r -X CompresorVideo-windows.zip "Compresor de video")
 else
   powershell -NoProfile -Command "Compress-Archive -Path \"$OUT\" -DestinationPath \"$DIST/CompresorVideo-windows.zip\""
 fi

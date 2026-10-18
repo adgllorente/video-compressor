@@ -20,7 +20,8 @@ fn main() -> eframe::Result {
             .with_title("Compresor de vídeo")
             .with_inner_size([820.0, 600.0])
             .with_min_inner_size([620.0, 420.0])
-            .with_drag_and_drop(true),
+            .with_drag_and_drop(true)
+            .with_icon(eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon-256.png")).unwrap_or_default()),
         ..Default::default()
     };
     eframe::run_native("Compresor de vídeo", options, Box::new(|cc| Ok(Box::new(App::new(&cc.egui_ctx)))))
