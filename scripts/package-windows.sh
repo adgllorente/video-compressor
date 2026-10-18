@@ -33,6 +33,8 @@ cp "$CACHE/ffmpeg.exe" "$OUT/ffmpeg.exe"
 rm -f "$DIST/CompresorVideo-windows.zip"
 if command -v zip >/dev/null; then
   (cd "$DIST" && zip -q -r -X CompresorVideo-windows.zip "Compresor de video")
+elif command -v 7z >/dev/null; then
+  (cd "$DIST" && 7z a -tzip -bso0 CompresorVideo-windows.zip "Compresor de video")
 else
   powershell -NoProfile -Command "Compress-Archive -Path \"$OUT\" -DestinationPath \"$DIST/CompresorVideo-windows.zip\""
 fi
